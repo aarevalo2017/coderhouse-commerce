@@ -1,6 +1,8 @@
 package com.coderhouse.proyectofinal.commerce.model;
 
-import java.util.Set;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -11,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.ToString;
+import lombok.Getter;
 
 @Data
 @Entity
@@ -24,7 +26,7 @@ public class ClientModel {
     private String name;
     private String lastName;
     private String dni;
-    @ToString.Exclude
+    @Getter(onMethod = @__(@JsonManagedReference))
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<OrderModel> orders;
+    private List<OrderModel> orders;
 }
