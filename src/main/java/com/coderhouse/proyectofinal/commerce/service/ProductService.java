@@ -27,15 +27,20 @@ public class ProductService {
     public ProductModel create(ProductModel product) {
 	return productRepository.save(product);
     }
-//
-//    public void reduceStock(ProductModel product, Integer qtySold) {
-//	product.setStock(product.getStock() - qtySold);
-//	productRepository.save(product);
-//    }
 
-    public void reduceStock(OrderLineModel l) {
-	ProductModel p = l.getProduct();
-	p.setStock(p.getStock() - l.getQuantity());
+    public void reduceStock(OrderLineModel orderLine) {
+	ProductModel p = productRepository.findById(orderLine.getProductId()).get();
+	p.setStock(p.getStock() - orderLine.getQuantity());
 	productRepository.save(p);
+    }
+
+    public boolean update(Long id, ProductModel product) {
+	Optional<ProductModel> opt = getSingleProduct(id);
+	if (opt.isPresent()) {
+	    product.setId(id);
+	    productRepository.save(product);
+	    return true;
+	}
+	return false;
     }
 }

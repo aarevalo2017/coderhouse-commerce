@@ -36,7 +36,7 @@ public class ClientController extends BaseController {
 
     @PostMapping
     public ResponseEntity<?> addNewClient(@Valid @RequestBody ClientModel client) {
-	return ResponseEntity.ok(clientService.create(client));
+	return ResponseEntity.status(HttpStatus.CREATED).body(clientService.create(client));
     }
 
     @DeleteMapping("/{id}")

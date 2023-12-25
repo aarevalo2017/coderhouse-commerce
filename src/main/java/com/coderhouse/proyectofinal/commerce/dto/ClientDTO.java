@@ -20,11 +20,6 @@ public class ClientDTO {
 
     public static Optional<ClientDTO> of(Optional<ClientModel> optClient) {
 	return optClient.map(ClientDTO::build);
-//	if (optClient.isPresent()) {
-//	    ClientModel c = optClient.get();
-//	    return Optional.of(build(c));
-//	}
-//	return Optional.empty();
     }
 
     public static List<ClientDTO> of(List<ClientModel> clients) {

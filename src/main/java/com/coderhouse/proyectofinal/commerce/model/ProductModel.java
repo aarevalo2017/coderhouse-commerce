@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +27,6 @@ public class ProductModel {
     @Size(min = 4, max = 50)
     private String sku;
     @Size(min = 5, max = 255)
-    @NotEmpty
     private String description;
     @Min(1)
     @Max(Integer.MAX_VALUE)

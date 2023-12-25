@@ -1,6 +1,5 @@
 package com.coderhouse.proyectofinal.commerce.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,8 +33,11 @@ public class OrderService {
     @Autowired
     private ProductService productService;
 
-    public List<OrderModel> getAllOrders() {
-	return orderRepository.findAll();
+    @Autowired
+    private WorldClockService worldClockService;
+
+    public List<OrderDTO> getAllOrders() {
+	return OrderDTO.of(orderRepository.findAll());
     }
 
     public Optional<OrderDTO> getSingleOrder(Long id) {
@@ -49,23 +51,35 @@ public class OrderService {
     public Optional<OrderDTO> create(OrderDTO order) {
 	Assert.notNull(order, "Order must not be null");
 	log.info("New order requested: {}", order.toString());
+
+	// Client validation
 	ClientModel client = clientService.getClientModel(order.getClient().getId())
 		.orElseThrow(() -> new ClientNotFoundException(order.getClient()));
-	OrderModel newOrder = OrderModel.builder().client(client).date(new Date()).build();
-	// Product and stock validation
+	log.info("Client found with: {}", client);
+	OrderModel newOrder = OrderModel.builder().client(client).build();
+
+	// Product and inventory validation
 	List<OrderLineModel> lines = order.getLines().stream().map(l -> {
-	    ProductModel product = productService.getSingleProduct(l.getProduct().getId())
-		    .orElseThrow(() -> new ProductNotFoundException(l.getProduct()));
+	    ProductModel product = productService.getSingleProduct(l.getProductId())
+		    .orElseThrow(() -> new ProductNotFoundException(l.getProductId()));
+	    log.info("Product found: {}", product);
 	    if (product.getStock() < l.getQuantity())
 		throw new ProductOutOfStockException(product);
-	    return OrderLineModel.builder().product(product).quantity(l.getQuantity())
-		    .totalPrice(product.getPrice() * l.getQuantity()).unitPrice(product.getPrice()).order(newOrder)
+	    log.info("Product [{}] inventory: {} units", product.getSku(), product.getStock());
+	    return OrderLineModel.builder()
+		    .productDescription(product.getDescription())
+		    .productId(product.getId())
+		    .quantity(l.getQuantity())
+		    .totalPrice(product.getPrice() * l.getQuantity())
+		    .unitPrice(product.getPrice())
+		    .order(newOrder)
 		    .build();
 	}).collect(Collectors.toList());
 	newOrder.setLines(lines);
+	newOrder.setDate(worldClockService.requestCurrentDateTime());
 	OrderModel storedOrder = orderRepository.save(newOrder);
 	storedOrder.getLines().forEach(productService::reduceStock);
-	log.info("New Order: {}", storedOrder.getId());
-	return OrderDTO.of(orderRepository.findById(storedOrder.getId()));
+	log.info("New Order created with id: {}", storedOrder.getId());
+	return Optional.of(OrderDTO.buildFromModel(storedOrder));
     }
 }

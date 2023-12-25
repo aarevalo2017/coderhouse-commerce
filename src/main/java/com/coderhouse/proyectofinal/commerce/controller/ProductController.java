@@ -3,10 +3,12 @@ package com.coderhouse.proyectofinal.commerce.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +41,12 @@ public class ProductController extends BaseController {
 
     @PostMapping
     public ResponseEntity<?> addNewProduct(@Valid @RequestBody ProductModel product) {
-	return ResponseEntity.ok(productService.create(product));
+	return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(product));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody ProductModel product) {
+	boolean response = productService.update(id, product);
+	return ResponseEntity.status(response ? HttpStatus.OK : HttpStatus.NOT_FOUND).build();
     }
 }

@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +33,6 @@ public class OrderLineModel {
     @JoinColumn(name = "order_id")
     @Getter(onMethod = @__(@JsonBackReference))
     private OrderModel order;
-    @OneToOne
-    private ProductModel product;
+    private Long productId;
+    private String productDescription;
 }

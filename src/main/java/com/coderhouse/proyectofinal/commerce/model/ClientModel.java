@@ -16,6 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
+import lombok.ToString.Exclude;
 
 @Data
 @Entity
@@ -38,6 +39,7 @@ public class ClientModel {
     @Size(min = 2, max = 20)
     private String dni;
 
+    @Exclude
     @Getter(onMethod = @__(@JsonManagedReference))
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderModel> orders;

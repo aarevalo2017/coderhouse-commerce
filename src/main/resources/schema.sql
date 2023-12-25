@@ -34,7 +34,7 @@ create table order_line (
   unit_price integer, 
   order_id bigint, 
   product_id bigint, 
+  product_description varchar(255),
   primary key (id),
-  constraint fk_order foreign key (order_id) references orders (id),
-  constraint fk_product foreign key (product_id) references products (id)
+  constraint fk_order foreign key (order_id) references orders (id)
 ) engine = InnoDB;
