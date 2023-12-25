@@ -1,40 +1,40 @@
---create database commerce;
+create database IF NOT EXISTS commerce;
 
-drop table order_line, orders, clients, products;
+drop table if exists order_line, orders, clients, products;
 
 create table clients (
-	id int not null auto_increment,
-    dni varchar(255) not null,
-    name varchar(255) not null,
-    last_name varchar(255) not null,
-    primary key (id)
-);
-
-create table products (
-	id int not null auto_increment,
-	sku varchar(50) not null,
-	description varchar(255) not null,
-	price int not null,
-	stock int not null,
-	primary key (id)
-);
+  id bigint not null auto_increment, 
+  dni varchar(255), 
+  last_name varchar(255), 
+  name varchar(255), 
+  primary key (id)
+) engine = InnoDB;
 
 create table orders (
-    id int not null auto_increment,
-    date datetime NOT NULL,
-    client_id int NOT null,
-    primary key (id),
-    constraint fk_client foreign key (client_id) references clients(id)
-);
+  id bigint not null auto_increment, 
+  date datetime(6), 
+  client_id bigint, 
+  primary key (id),
+  constraint fk_client foreign key (client_id) references clients (id)
+) engine = InnoDB;
+
+create table products (
+  id bigint not null auto_increment, 
+  description varchar(255), 
+  price integer, 
+  sku varchar(255), 
+  stock integer, 
+  primary key (id)
+) engine = InnoDB;
 
 create table order_line (
-	id int not null auto_increment,
-	quantity int not null,
-	unit_price int not null,
-	total_price int not null,
-	order_id int not null,
-	product_id int not null,
-	primary key (id),
-	constraint fk_order foreign key (order_id) references orders(id),
-	constraint fk_product foreign key (product_id) references products(id)
-);
+  id bigint not null auto_increment, 
+  quantity integer, 
+  total_price integer, 
+  unit_price integer, 
+  order_id bigint, 
+  product_id bigint, 
+  product_description varchar(255),
+  primary key (id),
+  constraint fk_order foreign key (order_id) references orders (id)
+) engine = InnoDB;
